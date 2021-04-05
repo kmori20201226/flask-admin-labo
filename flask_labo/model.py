@@ -12,10 +12,11 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 Base = declarative_base()
 metadata = Base.metadata
 
+_databese_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'flask-admin-labo.db')
+_engine = create_engine('sqlite:///' + _databese_file, convert_unicode=True)
+
 def session():
-    databese_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'flask-admin-labo.db')
-    engine = create_engine('sqlite:///' + databese_file, convert_unicode=True)
-    sess = scoped_session(sessionmaker(autocommit=False,autoflush=False,bind=engine))
+    sess = scoped_session(sessionmaker(autocommit=False,autoflush=False,bind=_engine))
     _init_db(sess)
     return sess
 
@@ -23,15 +24,15 @@ def _init_db(sess):
     try:
         rs = sess.query(Department).all()
     except Exception as ex:
-        model.metadata.create_all(bind=engine)
+        metadata.create_all(bind=_engine)
 
 
 class Department(Base):
     __tablename__ = 'department'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String(64), nullable=False, unique=True, comment='部署名')
-    description = Column(Text)
+    code = Column(String(10), nullable=False, unique=True, comment='部署コード')
+    name = Column(String(64), comment="部署名")
     created_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"))
     updated_at = Column(DateTime)
 
