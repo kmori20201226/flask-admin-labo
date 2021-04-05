@@ -1,34 +1,35 @@
 """flask-admin の拡張についての実験
 flask-admin を使って master/detail 型のマスタメンテナンスを実現する
+STEP0: ほぼ Getting Started そのまま
 """
 
-import os
-from datetime import datetime
-from flask import Flask, url_for, render_template, redirect
-from flask_admin import Admin, expose
-from flask_admin.base import expose, AdminIndexView
+from flask import Flask
+from flask_admin import Admin
 
 from flask_admin.contrib.sqla import ModelView
-from flask_admin.contrib.fileadmin import FileAdmin
-from flask_admin.model.template import TemplateLinkRowAction
-import model
+from model import (
+    Department,
+    Employee,
+    create_session
+)
 
 app = Flask(__name__)
 
-app.config['FLASK_ADMIN_SWATCH'] = 'cerulean'
+# テーマ切り替え https://bootswatch.com/
+app.config['FLASK_ADMIN_SWATCH'] = 'United'
+# データを更新する際に必要なキー
 app.secret_key = 'XH[chp??0hfdklxhQddsx'
 
 admin = Admin(
     app,
     name='Flask-admin laboratory',
-    #base_template='master.html',
-    #template_mode='bootstrap4',
-    #index_view=MyAdminIndexView()
+    template_mode='bootstrap4',
 )
 
-session = model.session()
-admin.add_view(ModelView(model.Department, session))
-admin.add_view(ModelView(model.Employee, session))
+session = create_session()
+
+admin.add_view(ModelView(Department, session))
+admin.add_view(ModelView(Employee, session))
 
 if __name__ == '__main__':
     app.run(port=5001, debug=True)
