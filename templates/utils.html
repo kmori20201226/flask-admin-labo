@@ -1,0 +1,5 @@
+{% macro employee_button(action, row_id, row) %}
+<a class="icon" href="{{ get_url('employee.view', department_id=get_pk_value(row)) }}">
+  <span class="glyph-icon fa fa-list-alt"></span>
+</a>
+{% endmacro %}
